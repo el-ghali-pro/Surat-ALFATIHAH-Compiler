@@ -1,0 +1,172 @@
+body {
+    font-family: 'Amiri', serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 113px;
+    background-image: url('background.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat; 
+    background-attachment: fixed; 
+    background-position: center; 
+    color: #333; 
+}
+
+/* Header */
+.header {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 7px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+/* Main Section */
+.main-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: auto;
+    width: 100%; /* Adjust the width to make it less large */
+    max-width: 500px; /* Set a maximum width */
+    position: relative; /* Ensures it's positioned properly */
+}
+
+.main-section h1 {
+    font-size: 1.4rem;
+    color: #1f268b;
+    text-align: center;
+}
+
+textarea {
+    width: 98%;
+    height: 100px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px;
+    font-size: 1rem;
+    color: white;
+    background: #1f268b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background: #219150;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #555;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Translation Buttons */
+.translation-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.translation-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background: #49a8e7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.translation-buttons button:hover {
+    background: #2980b9;
+}
+
+/* Translation Display */
+.translation {
+    display: none;
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.translation h3 {
+    font-size: 1.5rem;
+    color: #27ae60;
+}
+
+.translation p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+/* Recitation Buttons */
+.recitation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    display: none;
+}
+
+.recitation-buttons button {
+    background-color: #9b59b6;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.recitation-buttons button:hover {
+    background-color: #8e44ad;
+}
+
+/* Floating Microphone Button */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #6c2bc0;
+    color: white;
+    font-size: 2rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.fab:hover {
+    background: #219150;
+}
+.result {
+    white-space: pre-line; /* Preserves newlines */
+}

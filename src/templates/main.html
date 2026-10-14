@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحقق من سورة الفاتحة</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='islam.ico') }}">
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>سورة الفاتحة</h1>
+    </div>
+
+    <!-- Main Section -->
+    <section class="container">
+        <div class="main-section">
+            <h1>أدخل النص للتحليل</h1>
+            <form method="POST">
+                <textarea name="texte" placeholder="اكتب النص هنا...">{{ texte }}</textarea>
+                <button type="submit">تحليل</button>
+            </form>
+            <div class="result">{{ result|safe }}</div>
+
+            <p id="recitation-instruction" style="display: none;">يمكنك الاستماع إلى السورة كاملة عن طريق النقر على أحد هؤلاء الشيوخ.</p>
+
+            <!-- Recitation Buttons -->
+            <div class="recitation-buttons" id="recitation-buttons" style="display: none;">
+                <button class="recitation-btn" onclick="playRecitation('hossari')">🎶 الحصري</button>
+                <button class="recitation-btn" onclick="playRecitation('manchaoui')">🎶 المنشاوي</button>
+            </div>
+
+            <!-- Translation Buttons -->
+            <div class="translation-buttons" id="translation-buttons" style="display: none;">
+                <button onclick="showTranslation('english')">الإنجليزية</button>
+                <button onclick="showTranslation('french')">الفرنسية</button>
+                <button onclick="showTranslation('spanish')">الإسبانية</button>
+            </div>
+
+            <!-- Translations -->
+            <div class="translation" id="english">
+                <h3>الترجمة الإنجليزية:</h3>
+                <p id="english-text">{{ translations["English"] }}</p>
+                <button onclick="speakText('english-text', 'en-US')">🎙️ استماع</button>
+            </div>
+            <div class="translation" id="french">
+                <h3>الترجمة الفرنسية:</h3>
+                <p id="french-text">{{ translations["French"] }}</p>
+                <button onclick="speakText('french-text', 'fr-FR')">🎙️ استماع</button>
+            </div>
+            <div class="translation" id="spanish">
+                <h3>الترجمة الإسبانية:</h3>
+                <p id="spanish-text">{{ translations["Spanish"] }}</p>
+                <button onclick="speakText('spanish-text', 'es-ES')">🎙️ استماع</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Floating Microphone Button -->
+    <button class="fab" onclick="toggleDictation()">🎤</button>
+
+    <script>
+        // Function to show translation
+        function showTranslation(lang) {
+            document.querySelectorAll('.translation').forEach(div => {
+                div.style.display = 'none';
+            });
+            document.getElementById(lang).style.display = 'block';
+        }
+
+        // Example: Show translation buttons if result is valid
+        const result = "{{ result }}";
+        if (result.includes('✅')) {
+            document.getElementById('recitation-instruction').style.display = 'block';
+            document.getElementById('translation-buttons').style.display = 'flex';
+            document.getElementById('recitation-buttons').style.display = 'flex';
+        }
+
+        let currentAudio = null;  // Global variable to store the current audio object
+        let isPlaying = false;    // Flag to track if audio is playing
+
+        // Function to play or stop recitation
+        function playRecitation(chioukh) {
+            let audioUrl = "";
+            if (chioukh === 'hossari') {
+                audioUrl = "{{ url_for('static', filename='hossari_recitation.mp3') }}";
+            } else if (chioukh === 'manchaoui') {
+                audioUrl = "{{ url_for('static', filename='manchaoui_recitation.mp3') }}";
+            }
+
+            if (isPlaying && currentAudio) {
+                currentAudio.pause();  // Stop the current audio
+                currentAudio.currentTime = 0;  // Reset the audio to the start
+                isPlaying = false;  // Update the flag to show audio is stopped
+                document.querySelectorAll('.recitation-btn').forEach(button => {
+                    button.textContent = "🎶 بدء التلاوة";  // Reset button text
+                });
+            } else {
+                if (currentAudio) {
+                    currentAudio.pause();  // Stop any currently playing audio
+                }
+                currentAudio = new Audio(audioUrl);  // Create a new audio object
+                currentAudio.play();  // Play the selected recitation
+                isPlaying = true;  // Update the flag to show audio is playing
+                document.querySelectorAll('.recitation-btn').forEach(button => {
+                    button.textContent = "⏸️ إيقاف التلاوة";  // Change button text to "Pause Recitation"
+                });
+            }
+        }
+
+        // Variable to store recognition object and recording status
+        let recognition;
+        let isRecording = false;
+
+        // Function to display the selected section
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(function(section) {
+                section.classList.remove('active-content');
+            });
+            document.getElementById(sectionId).classList.add('active-content');
+        }
+
+        function speakText(elementId, lang) {
+            // Get the text content from the specified element
+            const text = document.getElementById(elementId).textContent;
+
+            // Create a new SpeechSynthesisUtterance instance
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            // Set the language for the utterance
+            utterance.lang = lang;
+
+            // Speak the text
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleDictation() {
+            if (isRecording) {
+                stopDictation();
+            } else {
+                startDictation();
+            }
+        }
+
+        function startDictation() {
+            if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'ar-SA';
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[event.resultIndex][0].transcript;
+                    document.querySelector('textarea[name="texte"]').value = transcript.replace(/,/g, '');
+                };
+
+                recognition.onerror = function(event) {
+                    console.error("Error: " + event.error);
+                };
+
+                isRecording = true;
+            } else {
+                alert("التعرف على الصوت غير مدعوم.");
+            }
+        }
+
+        function stopDictation() {
+            if (recognition) {
+                recognition.stop();
+                isRecording = false;
+            }
+        }
+
+    </script>
+</body>
+</html>
